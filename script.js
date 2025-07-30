@@ -3,8 +3,7 @@ const cartItemsDiv = document.getElementById("cart-items");
 const cartSidebar = document.getElementById("cart-sidebar");
 const cartOverlay = document.getElementById("cart-overlay");
 const totalPrice = document.getElementById("cart-total");
-const productList = document.getElementById("product-list");
-const searchInput = document.getElementById("search-input");
+const productContainer = document.getElementById("product-container");
 
 let cart = [];
 let allProducts = [];
@@ -54,6 +53,8 @@ function renderCart() {
 
 cartItemsDiv.addEventListener("click", (e) => {
   const id = e.target.getAttribute("data-id");
+  if (!id) return;
+
   const item = cart.find((p) => p.id === id);
   if (!item) return;
 
@@ -90,22 +91,32 @@ function toggleCart() {
   cartOverlay.classList.toggle("active");
 }
 
-function renderProducts(products) {
-  if (!productList) return;
+function clearCart() {
+  if (confirm("Sepeti temizlemek istediğinize emin misiniz?")) {
+    cart = [];
+    updateCartCount();
+    renderCart();
+    localStorage.removeItem("cart");
+  }
+}
 
-  productList.innerHTML = "";
+function renderProducts(products) {
+  allProducts = products; // arama vs için kaydet
+  if (!productContainer) return;
+
+  productContainer.innerHTML = "";
 
   products.forEach((product) => {
     const div = document.createElement("div");
     div.className = "product-card";
     div.setAttribute("data-id", product.id);
     div.innerHTML = `
-      <img src="${product.img}" alt="${product.name}" />
+      <img src="${product.image}" alt="${product.name}" />
       <h3>${product.name}</h3>
-      <p>${product.price} TL</p>
+      <p>${product.price.toFixed(2)} TL</p>
       <button>Sepete Ekle</button>
     `;
-    productList.appendChild(div);
+    productContainer.appendChild(div);
   });
 
   document.querySelectorAll(".product-card button").forEach((button) => {
@@ -113,7 +124,7 @@ function renderProducts(products) {
       const card = button.closest(".product-card");
       const id = card.getAttribute("data-id");
       const name = card.querySelector("h3").textContent;
-      const price = parseFloat(card.querySelector("p").textContent.replace("TL", ""));
+      const price = parseFloat(card.querySelector("p").textContent.replace("TL", "").trim());
       const img = card.querySelector("img").src;
 
       const existingItem = cart.find((item) => item.id === id);
@@ -136,15 +147,16 @@ function showAddNotification() {
   notification.className = "add-notification";
   notification.textContent = "Ürün sepete eklendi!";
   Object.assign(notification.style, {
+    background: "rgba(255, 255, 255, 0.1)",
     position: "fixed",
     top: "20px",
     right: "20px",
-    background: "#2ecc71",
-    color: "white",
+    backdropFilter: 'blur(75px)',
+    color: "black",
     padding: "1rem",
     borderRadius: "8px",
     boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
-    zIndex: 10000
+    zIndex: 10000,
   });
   document.body.appendChild(notification);
 
@@ -153,48 +165,17 @@ function showAddNotification() {
   }, 2000);
 }
 
-if (searchInput) {
-  searchInput.addEventListener("input", () => {
-    const keyword = searchInput.value.toLowerCase();
-    const filtered = allProducts.filter(product =>
-      product.name.toLowerCase().includes(keyword)
-    );
-    renderProducts(filtered);
-  });
-}
-
-fetch("products.json")
-  .then((res) => res.json())
-  .then((products) => {
-    allProducts = products;
-    renderProducts(allProducts);
-  });
-
 document.addEventListener("DOMContentLoaded", () => {
   sepetiYukle();
   updateCartCount();
   renderCart();
-});
-=======
-fetch("./products.json")
-  .then(res => res.json())
-  .then(products => {
-    const container = document.getElementById("product-container");
 
-    products.forEach(product => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-
-      card.innerHTML = `
-        <img src="${product.image}" alt="${product.name}" />
-        <h2>${product.name}</h2>
-        <p>${product.price.toFixed(2)} TL</p>
-        <button>Sepete Ekle</button>
-      `;
-
-      container.appendChild(card);
+  fetch("./products.json")
+    .then((res) => res.json())
+    .then((products) => {
+      renderProducts(products);
+    })
+    .catch((err) => {
+      console.error("Ürün verisi yüklenemedi:", err);
     });
-  })
-  .catch(err => {
-    console.error("Ürün verisi yüklenemedi:", err);
-  });
+});
