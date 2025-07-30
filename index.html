@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UISOFT E-Commerce</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1><a href="index.html" style="color: white; text-decoration: none;">UISOFT E-Commerce</a></h1>
+            <nav>
+                <a href="index.html" class="nav-link active">Ana Sayfa</a>
+                <a href="products.html" class="nav-link">Ürünler</a>
+                <a href="#" class="nav-link">İletişim</a>
+                <a href="#" class="nav-link cart-link" onclick="toggleCart()">
+                    🛒 Sepet (<span id="cart-count">0</span>)
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>En İyi Ürünler, En Uygun Fiyatlar!</h2>
+            <p>Teknoloji dünyasının en yeni ürünlerini keşfedin</p>
+            <a href="products.html" class="hero-btn">Ürünleri İncele</a>
+        </div>
+    </section>
+
+    <!-- Ana İçerik -->
+    <main>
+        <div class="container">
+            <h2>✨ Öne Çıkan Ürünlerimiz ✨</h2>
+            
+            <!-- Ürün Konteyner - JavaScript ile doldurulacak -->
+            <div id="product-container">
+                <!-- Ürün kartları buraya gelecek -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Sepet Sidebar -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>🛒 Sepetim</h3>
+            <button class="close-cart" onclick="toggleCart()">✕</button>
+        </div>
+        
+        <div class="cart-content">
+            <div id="cart-items">
+                <!-- Sepet ürünleri buraya gelecek -->
+                <div class="empty-cart">
+                    <p>Sepetiniz boş</p>
+                    <span>🛍️</span>
+                </div>
+            </div>
+            
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <strong>Toplam: <span id="cart-total">0.00</span> TL</strong>
+                </div>
+                <button class="checkout-btn">Satın Al</button>
+                <button class="clear-cart-btn" onclick="clearCart()">Sepeti Temizle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sepet Overlay -->
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 UISOFT E-Commerce. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
