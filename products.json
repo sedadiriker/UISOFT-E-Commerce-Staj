@@ -1,1 +1,38 @@
-
+[
+  {
+    "id": 1,
+    "name": "Laptop",
+    "price": 15000,
+    "image": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop&crop=center"
+  },
+  {
+    "id": 2,
+    "name": "Akıllı Telefon",
+    "price": 8500,
+    "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop&crop=center"
+  },
+  {
+    "id": 3,
+    "name": "Kulaklık",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop&crop=center"
+  },
+  {
+    "id": 4,
+    "name": "Klavye",
+    "price": 280,
+    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=300&fit=crop&crop=center"
+  },
+  {
+    "id": 5,
+    "name": "Mouse",
+    "price": 150,
+    "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=300&fit=crop&crop=center"
+  },
+  {
+    "id": 6,
+    "name": "Tablet",
+    "price": 4200,
+    "image": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=300&fit=crop&crop=center"
+  }
+]
