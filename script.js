@@ -3,11 +3,28 @@ const cartItemsDiv = document.getElementById("cart-items");
 const cartSidebar = document.getElementById("cart-sidebar");
 const cartOverlay = document.getElementById("cart-overlay");
 const totalPrice = document.getElementById("cart-total");
-const productList = document.getElementById("product-list");
-const searchInput = document.getElementById("search-input");
+const productList = document.getElementById("product-container"); 
+const searchInput = document.getElementById("search-input"); 
 
 let cart = [];
-let allProducts = [];
+let allProducts = []; 
+
+// Sepete Ürün Ekleme Fonksiyonu
+function addToCart(product) {
+  const existingItem = cart.find((item) => item.id === product.id);
+  if (existingItem) {
+    existingItem.quantity++;
+  } else {
+    // products.json'dan gelen ürün nesnesini olduğu gibi saklayalım, quantity ekleyelim
+    cart.push({ ...product, quantity: 1 });
+  }
+
+  updateCartCount();
+  renderCart();
+  localStorage.setItem("cart", JSON.stringify(cart));
+  showAddNotification();
+  toggleCart();
+}
 
 function updateCartCount() {
   const total = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -33,7 +50,7 @@ function renderCart() {
     const itemDiv = document.createElement("div");
     itemDiv.classList.add("cart-item");
     itemDiv.innerHTML = `
-      <img src="${item.img}" alt="${item.name}" />
+      <img src="${item.image}" alt="${item.name}" /> 
       <div class="cart-item-info">
         <h4>${item.name}</h4>
         <div class="cart-item-controls">
@@ -53,7 +70,7 @@ function renderCart() {
 }
 
 cartItemsDiv.addEventListener("click", (e) => {
-  const id = e.target.getAttribute("data-id");
+  const id = parseInt(e.target.getAttribute("data-id"));
   const item = cart.find((p) => p.id === id);
   if (!item) return;
 
@@ -90,43 +107,45 @@ function toggleCart() {
   cartOverlay.classList.toggle("active");
 }
 
-function renderProducts(products) {
-  if (!productList) return;
+function clearCart() {
+    if (confirm("Sepeti tamamen boşaltmak istediğinizden emin misiniz?")) {
+        cart = [];
+        updateCartCount();
+        renderCart();
+        localStorage.removeItem("cart"); 
+        toggleCart(); 
+        alert("Sepetiniz temizlendi!");
+    }
+}
 
-  productList.innerHTML = "";
 
-  products.forEach((product) => {
+function renderProducts(productsToRender) {
+  if (!productList) {
+    console.error("HTML'de 'product-container' ID'sine sahip element bulunamadı.");
+    return;
+  }
+
+  productList.innerHTML = ""; 
+
+  productsToRender.forEach((product) => {
     const div = document.createElement("div");
     div.className = "product-card";
-    div.setAttribute("data-id", product.id);
+    div.setAttribute("data-id", product.id); 
     div.innerHTML = `
-      <img src="${product.img}" alt="${product.name}" />
-      <h3>${product.name}</h3>
-      <p>${product.price} TL</p>
-      <button>Sepete Ekle</button>
+      <img src="${product.image}" alt="${product.name}" /> <h3>${product.name}</h3>
+      <p>${product.price.toFixed(2)} TL</p> <button class="add-to-cart-btn" data-id="${product.id}">Sepete Ekle</button>
     `;
     productList.appendChild(div);
   });
 
-  document.querySelectorAll(".product-card button").forEach((button) => {
-    button.addEventListener("click", () => {
-      const card = button.closest(".product-card");
-      const id = card.getAttribute("data-id");
-      const name = card.querySelector("h3").textContent;
-      const price = parseFloat(card.querySelector("p").textContent.replace("TL", ""));
-      const img = card.querySelector("img").src;
 
-      const existingItem = cart.find((item) => item.id === id);
-      if (existingItem) {
-        existingItem.quantity++;
-      } else {
-        cart.push({ id, name, price, quantity: 1, img });
+  document.querySelectorAll(".add-to-cart-btn").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const id = parseInt(e.target.getAttribute("data-id"));
+      const productToAdd = allProducts.find(p => p.id === id); 
+      if (productToAdd) {
+        addToCart(productToAdd);
       }
-
-      updateCartCount();
-      renderCart();
-      localStorage.setItem("cart", JSON.stringify(cart));
-      showAddNotification();
     });
   });
 }
@@ -164,37 +183,22 @@ if (searchInput) {
 }
 
 fetch("products.json")
-  .then((res) => res.json())
+  .then((res) => {
+    if (!res.ok) {
+      throw new Error(`HTTP hatası! Durum: ${res.status}`);
+    }
+    return res.json();
+  })
   .then((products) => {
-    allProducts = products;
-    renderProducts(allProducts);
+    allProducts = products; 
+    renderProducts(allProducts); 
+  })
+  .catch((err) => {
+    console.error("Ürün verisi yüklenemedi:", err);
   });
 
 document.addEventListener("DOMContentLoaded", () => {
-  sepetiYukle();
+  sepetiYukle(); 
   updateCartCount();
-  renderCart();
+  renderCart(); 
 });
-=======
-fetch("./products.json")
-  .then(res => res.json())
-  .then(products => {
-    const container = document.getElementById("product-container");
-
-    products.forEach(product => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-
-      card.innerHTML = `
-        <img src="${product.image}" alt="${product.name}" />
-        <h2>${product.name}</h2>
-        <p>${product.price.toFixed(2)} TL</p>
-        <button>Sepete Ekle</button>
-      `;
-
-      container.appendChild(card);
-    });
-  })
-  .catch(err => {
-    console.error("Ürün verisi yüklenemedi:", err);
-  });
